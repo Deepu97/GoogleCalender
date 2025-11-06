@@ -12,6 +12,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
+      "https://incubate.nxtclouds.com/"
     ],
     methods: ["GET", "POST", "OPTIONS"],
     credentials: true,
