@@ -111,7 +111,7 @@ app.post("/get-google-events", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch Google events" });
   }
 });
+const PORT = process.env.PORT || 5000;
 
 
-
-app.listen(process.env.Port, () => console.log("✅ Backend running on 5000"));
+app.listen(PORT, () => console.log("✅ Backend running on 5000"));
