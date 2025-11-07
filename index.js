@@ -21,7 +21,7 @@ app.use(
 app.post("/get-token", async (req, res) => {
   try {
     const { code } = req.body;
-
+   console.log(code);
     const data = new URLSearchParams({
       code,
       client_id: process.env.GOOGLE_CLIENT_ID,
@@ -29,6 +29,7 @@ app.post("/get-token", async (req, res) => {
       redirect_uri: "http://localhost:3000",
       grant_type: "authorization_code",
     });
+    console.log(tokenRes);
 
     const tokenRes = await axios.post(
       "https://oauth2.googleapis.com/token",
