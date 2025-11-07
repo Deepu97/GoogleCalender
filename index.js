@@ -8,16 +8,7 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "https://incubate.nxtclouds.com/"
-    ],
-    methods: ["GET", "POST", "OPTIONS"],
-    credentials: true,
-  })
-);
+app.use(cors({ origin: "*", methods: ["GET", "POST", "OPTIONS"] }));
 app.post("/get-token", async (req, res) => {
   try {
     const { code } = req.body;
