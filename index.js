@@ -17,7 +17,7 @@ app.post("/get-token", async (req, res) => {
       code,
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: "https://incubate.nxtclouds.com/",
+      redirect_uri: "https://incubate.nxtclouds.com",
       grant_type: "authorization_code",
     });
     // console.log(tokenRes);
