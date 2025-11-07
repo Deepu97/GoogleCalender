@@ -29,7 +29,7 @@ app.post("/get-token", async (req, res) => {
       redirect_uri: "http://localhost:3000",
       grant_type: "authorization_code",
     });
-    console.log(tokenRes);
+    // console.log(tokenRes);
 
     const tokenRes = await axios.post(
       "https://oauth2.googleapis.com/token",
