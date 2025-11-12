@@ -117,6 +117,30 @@ app.post("/get-google-events", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch Google events" });
   }
 });
+app.get("/refresh-token", async (req, res) => {
+  try {
+    if (!savedRefreshToken) {
+      return res.status(400).json({ error: "No refresh token stored" });
+    }
+
+    const response = await axios.post("https://oauth2.googleapis.com/token", {
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      refresh_token: savedRefreshToken,
+      grant_type: "refresh_token",
+    });
+
+    const { access_token, expires_in } = response.data;
+
+    res.json({
+      access_token,
+      expires_in,
+    });
+  } catch (error) {
+    console.error("❌ Error refreshing token:", error.response?.data || error.message);
+    res.status(500).json({ error: "Failed to refresh token" });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 
