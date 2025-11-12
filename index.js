@@ -3,7 +3,7 @@ import cors from "cors";
 import axios from "axios";
 import dotenv from "dotenv";
 import { google } from "googleapis";
-
+let savedRefreshToken = null;
 dotenv.config();
 const app = express();
 
@@ -21,14 +21,19 @@ app.post("/get-token", async (req, res) => {
       grant_type: "authorization_code",
     });
     // console.log(tokenRes);
-
+    
     const tokenRes = await axios.post(
       "https://oauth2.googleapis.com/token",
       data.toString(),
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
+     const{access_token,expires_in,refresh_token}=tokenRes.data;
       console.log(tokenRes.data);
-    res.json(tokenRes.data);
+       res.json({
+      access_token,
+      expires_in,
+      refresh_token: refresh_token || "Already saved earlier",
+    });
   } catch (err) {
     console.log("Token Exchange Error:", err.response?.data || err.message);
     res.status(400).json({ error: err.response?.data || err.message });
