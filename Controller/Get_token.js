@@ -24,14 +24,14 @@ const Get_token=async (req,res)=>{
 const CreateMeeting=async(req,res)=>{
      try {
       console.log(req.body);
-    const { accessToken, data } = req.body;
-    const eventsData = data;
+    const { accessToken, Meet } = req.body;
+    const eventsData = Meet;
     console.log("📩 Received Event:", eventsData);
 
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      "http://localhost:3000"
+      "https://incubate.nxtclouds.com/"
     );
 
     oauth2Client.setCredentials({ access_token: accessToken });
