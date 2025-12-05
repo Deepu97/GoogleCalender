@@ -3,31 +3,37 @@ import cors from "cors";
 import axios from "axios";
 import dotenv from "dotenv";
 import { google } from "googleapis";
-
+let savedRefreshToken = null;
 dotenv.config();
 const app = express();
-app.use(cors());
-app.use(express.json());
 
+app.use(express.json());
+app.use(cors({ origin: "*", methods: ["GET", "POST", "OPTIONS"] }));
 app.post("/get-token", async (req, res) => {
   try {
     const { code } = req.body;
-
+   console.log(code);
     const data = new URLSearchParams({
       code,
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: "http://localhost:3000",
+      redirect_uri: "https://incubate.nxtclouds.com",
       grant_type: "authorization_code",
     });
-
+    // console.log(tokenRes);
+    
     const tokenRes = await axios.post(
       "https://oauth2.googleapis.com/token",
       data.toString(),
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
+     const{access_token,expires_in,refresh_token}=tokenRes.data;
       console.log(tokenRes.data);
-    res.json(tokenRes.data);
+       res.json({
+      access_token,
+      expires_in,
+      refresh_token: refresh_token || "Already saved earlier",
+    });
   } catch (err) {
     console.log("Token Exchange Error:", err.response?.data || err.message);
     res.status(400).json({ error: err.response?.data || err.message });
@@ -43,7 +49,7 @@ app.post("/create-meet", async (req, res) => {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      "http://localhost:3000"
+      "https://incubate.nxtclouds.com/"
     );
 
     oauth2Client.setCredentials({ access_token: accessToken });
@@ -111,7 +117,7 @@ app.post("/get-google-events", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch Google events" });
   }
 });
-const PORT = process.env.PORT || 5000;
 
 
-app.listen(PORT, () => console.log("✅ Backend running on 5000"));
+
+app.listen(process.env.Port, () => console.log("✅ Backend running on 5000"));
