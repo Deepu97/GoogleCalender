@@ -3,7 +3,7 @@ require("dotenv").config();
 
 async function GeminiAi(req,res) {
      
-     console.log(req.body);
+     const {transcript}=req.body;
     //  const {transcript}=req.body;
 
 
@@ -13,8 +13,8 @@ async function GeminiAi(req,res) {
     // ✅ Make sure model name matches the latest endpoint
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    const transcript =
-      "Schedule a meeting titled Project Discussion on November 12th 2025 at 4 PM.";
+    // const transcript =
+    //   "Schedule a meeting titled Project Discussion on November 12th 2025 at 4 PM.";
 
     const prompt = `
 Extract the meeting details from the given text.
