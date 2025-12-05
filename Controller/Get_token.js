@@ -1,16 +1,9 @@
-import express from "express";
-import cors from "cors";
-import axios from "axios";
-import dotenv from "dotenv";
-import { google } from "googleapis";
+const axios=require('axios');
 
-dotenv.config();
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-app.post("/get-token", async (req, res) => {
-  try {
+const {google}=require('googleapis')
+let savedRefreshToken = null;
+const Get_token=async (req,res)=>{
+    try {
     const { code } = req.body;
 
     const data = new URLSearchParams({
@@ -21,23 +14,18 @@ app.post("/get-token", async (req, res) => {
       grant_type: "authorization_code",
     });
 
-    const tokenRes = await axios.post(
-      "https://oauth2.googleapis.com/token",
-      data.toString(),
-      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-    );
-      console.log(tokenRes.data);
-    res.json(tokenRes.data);
+    const tokenRes = await axios.post("https://oauth2.googleapis.com/token", data);
+    res.json(tokenRes.data); // includes refresh_token (first time only)
   } catch (err) {
-    console.log("Token Exchange Error:", err.response?.data || err.message);
-    res.status(400).json({ error: err.response?.data || err.message });
+    res.status(500).json({ error: err.message });
   }
-});
-
-app.post("/create-meet", async (req, res) => {
-  try {
-    const { accessToken, events } = req.body;
-    const eventsData = events[0];
+}
+//create metting 
+const CreateMeeting=async(req,res)=>{
+     try {
+      console.log(req.body);
+    const { accessToken, data } = req.body;
+    const eventsData = data;
     console.log("📩 Received Event:", eventsData);
 
     const oauth2Client = new google.auth.OAuth2(
@@ -50,8 +38,12 @@ app.post("/create-meet", async (req, res) => {
 
     const calendar = google.calendar({ version: "v3", auth: oauth2Client });
 
-    const startTime = new Date(eventsData.start);
-    const endTime = new Date(eventsData.end);
+    // const startTime = new Date(eventsData.start);
+    // const endTime = new Date(eventsData.end);
+  const startTime = new Date(`${data.start}T${data.end}:00+05:30`); // combine date + time
+const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // default 1-hour meeting
+
+
 
     if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
       return res.status(400).json({ error: "Invalid time value received" });
@@ -90,10 +82,11 @@ app.post("/create-meet", async (req, res) => {
     console.error("❌ Google Meet Error:", err.response?.data || err.message);
     res.status(500).json({ error: err.response?.data || err.message });
   }
-});
-////get events of calander
-app.post("/get-google-events", async (req, res) => {
-  const { accessToken } = req.body;
+}
+
+// get google Events
+const GetEvent=async(req,res)=>{
+    const { accessToken } = req.body;
 
   try {
     const calendarRes = await axios.get(
@@ -110,8 +103,24 @@ app.post("/get-google-events", async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch Google events" });
   }
-});
-const PORT = process.env.PORT || 5000;
 
+}
+const RefreshToken=async(req,res)=>{
+  try {
+    const { refresh_token } = req.body;
 
-app.listen(PORT, () => console.log("✅ Backend running on 5000"));
+    const data = new URLSearchParams({
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      refresh_token,
+      grant_type: "refresh_token",
+    });
+
+    const tokenRes = await axios.post("https://oauth2.googleapis.com/token", data);
+    res.json(tokenRes.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+
+}
+module.exports={Get_token,GetEvent,CreateMeeting,RefreshToken}
