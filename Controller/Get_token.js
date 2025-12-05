@@ -21,31 +21,30 @@ const Get_token=async (req,res)=>{
   }
 }
 //create metting 
-const CreateMeeting=async(req,res)=>{
-     try {
-      console.log(req.body);
+const CreateMeeting = async (req, res) => {
+  try {
+    console.log(req.body);
+
     const { accessToken, Meet } = req.body;
     const eventsData = Meet;
+
     console.log("📩 Received Event:", eventsData);
 
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      "https://incubate.nxtclouds.com/"
+      "https://incubate.nxtclouds.com"   // no ending slash
     );
 
     oauth2Client.setCredentials({ access_token: accessToken });
 
     const calendar = google.calendar({ version: "v3", auth: oauth2Client });
 
-    // const startTime = new Date(eventsData.start);
-    // const endTime = new Date(eventsData.end);
-  const startTime = new Date(`${data.start}T${data.end}:00+05:30`); // combine date + time
-const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // default 1-hour meeting
+    // ⭐ FIXED — Use direct ISO timestamp
+    const startTime = new Date(eventsData.start);
+    const endTime = new Date(eventsData.end);
 
-
-
-    if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+    if (isNaN(startTime) || isNaN(endTime)) {
       return res.status(400).json({ error: "Invalid time value received" });
     }
 
@@ -82,7 +81,7 @@ const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // default 1-hou
     console.error("❌ Google Meet Error:", err.response?.data || err.message);
     res.status(500).json({ error: err.response?.data || err.message });
   }
-}
+};
 
 // get google Events
 const GetEvent=async(req,res)=>{
