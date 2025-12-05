@@ -16,15 +16,26 @@ async function GeminiAi(req,res) {
     // const transcript =
     //   "Schedule a meeting titled Project Discussion on November 12th 2025 at 4 PM.";
 
-    const prompt = `
-Extract the meeting details from the given text.
-Return only JSON with the following fields:
-- title
-- agenda (default: "Voice scheduled meeting")
-- start (YYYY-MM-DD)
-- end (24-hour format HH:mm)
+  const prompt = `
+Extract meeting details from the given text.
+
+Return ONLY valid JSON in this exact format:
+{
+  "title": "string",
+  "agenda": "string",
+  "start": "YYYY-MM-DDTHH:mm",
+  "end": "YYYY-MM-DDTHH:mm"
+}
+
+Rules:
+- "agenda" default: "Voice scheduled meeting"
+- "start" must be ISO format: YYYY-MM-DDTHH:mm
+- "end" must be ISO format: YYYY-MM-DDTHH:mm
+- Time must be 24-hour format.
+- Do NOT include AM/PM.
 
 Text: """${transcript}"""
+
 Return JSON only.
 `;
 
