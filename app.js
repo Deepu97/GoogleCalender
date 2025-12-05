@@ -1,11 +1,11 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
 
 dotenv.config();
 
-import GoogleMeet from "./Routes/GoogleCalender/GoogleMeet.js";
-import GeminiRoute from "./Routes/Gemini/GeminiRoute.js";
+const GoogleMeet = require("./Routes/GoogleCalender/GoogleMeet");
+const GeminiRoute = require("./Routes/Gemini/GeminiRoute");
 
 const app = express();
 app.use(cors());
