@@ -1,4 +1,5 @@
 const express=require('express');
+import dotenv from "dotenv";
 const cors=require('cors');
 const app=express();
 app.use(cors());
@@ -7,7 +8,7 @@ const GoogleMeet=require('./Routes/GoogleCalender/GoogleMeet');
 const GeminiRoute=require('./Routes/Gemini/GeminiRoute');
 app.use('/',GoogleMeet);
 app.use('/',GeminiRoute);
-app.listen(5000,()=>{
+app.listen(process.env.Port,()=>{
     
     console.log("server listen on port 5000");
 })
